@@ -62,15 +62,16 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
 
     int alienRows = 2;
     int alienColumns = 3;
-    int alienCount = 0; //number of aliens to defeat
-    int alienVelocityX = 1; //alien moving speed
+    int alienCount = 0; 
+    int alienVelocityX = 1; 
 
     //bullets
     ArrayList<Block> bulletArray;
     int bulletWidth = tileSize/8;
     int bulletHeight = tileSize/2;
-    int bulletVelocityY = -10; //bullet moving speed
+    int bulletVelocityY = -10;
 
+    // game 
     Timer gameLoop;
     boolean gameOver = false;
     boolean win = false;
@@ -79,8 +80,8 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
     int round = 1;
 
     SpaceInvaders() {
+        // for the panel
         setPreferredSize(new Dimension(boardWidth, boardHeight));
-        // Load background image
         setFocusable(true);
         addKeyListener(this);
 
@@ -170,6 +171,8 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
 
     public void move() {
 
+        
+        // player's move
         if (ship.y + shipVelocityY >= 438 || ship.x + shipVelocityX <= 4 || ship.x + shipVelocityX >= 434) {
             ship.x += 0;
             ship.y += 0;
@@ -177,6 +180,7 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
             ship.x += shipVelocityX;
             ship.y += shipVelocityY;
         }
+        
         //alien
         for (int i = 0; i < alienArray.size(); i++) {
             Block alien = alienArray.get(i);
