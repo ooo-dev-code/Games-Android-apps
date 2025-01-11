@@ -232,6 +232,7 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
             bulletArray.clear();
             createAliens();
             round += 1;
+            System.out.println(round);
         }
 
         if (round == 4) {
@@ -251,6 +252,7 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
                     alienHeight,
                     alienImgArray.get(randomImgIndex)
                 );
+                System.out.println(alienImgArray.size());
                 alienArray.add(alien);
             }
         }
