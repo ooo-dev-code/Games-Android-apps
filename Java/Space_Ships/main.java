@@ -5,12 +5,13 @@ import javax.swing.JFrame;
 public class main {
     
      public static void main(String[] args) {
-
+        // variables
         int tileSize = 32; 
         int rows = 16;
         int columns = 16;
         int boardHeight = columns*tileSize;
         int boardWidth = rows*tileSize;
+         
         JFrame frame = new JFrame();
         frame.setTitle("SpaceShip");
         frame.setResizable(true);
