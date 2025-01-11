@@ -280,6 +280,14 @@ public class SpaceInvaders extends JPanel implements ActionListener, KeyListener
             gameLoop.stop();
             ship.x = tileSize * columns/2 - tileSize;
             ship.y = tileSize * rows - tileSize*2-10;
+            System.out.println(round);
+            System.out.println(ship.y);
+            System.out.println(ship.x);
+            System.out.println(tileSize);
+            System.out.println(round);
+            System.out.println(ship.y);
+            System.out.println(ship.x);
+            System.out.println(tileSize);
         }
     }
     
