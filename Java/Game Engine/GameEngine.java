@@ -93,6 +93,15 @@ public class GameEngine extends JPanel implements ActionListener, KeyListener{
 
     @Override
     public void keyPressed(KeyEvent e) {
+        
+        if (e.getKeyCode() == KeyEvent.VK_6) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Items/Yellow.png")).getImage();
+            idImg = 6;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_7) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Ennemies/potato.png")).getImage();
+            idImg = 7;
+        }
     }
 
     @Override
@@ -127,7 +136,7 @@ public class GameEngine extends JPanel implements ActionListener, KeyListener{
             chosen = new ImageIcon(getClass().getResource("./assets/Ground/Gray.png")).getImage();
             idImg = 5;
         }
-        if (e.getKeyCode() == KeyEvent.VK_6) {
+        if (e.getKeyCode() == KeyEvent.VK_8) {
             for (Tile tile : tiles) {
                 System.out.println(tile.idImg);
                 datas.add(tile.idImg);
