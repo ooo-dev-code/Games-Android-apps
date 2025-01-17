@@ -9,7 +9,7 @@ This is the first game engine that I've made in Java.
 - Press 3 to choose pink;
 - Press 4 to choose green;
 - Press 5 to choose grey;
-- Press 6 to save;
+- Press 8 to save;
 
 https://github.com/user-attachments/assets/63abe58b-a1ea-4dc3-8633-9f7a9ccd40a0
 
