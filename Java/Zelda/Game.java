@@ -107,21 +107,6 @@ public class Game extends JPanel implements ActionListener, KeyListener {
                         if (value == 1 ) {
                             tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, idImg, "bg"));
                         }
-                        // if (value == 2 ) {
-                        //     tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, chosen2, idImg, "platform"));
-                        // }
-                        // if (value == 3 ) {
-                        //     tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, chosen3, idImg, "platform"));
-                        // } 
-                        // if (value == 4 ) {
-                        //     tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, chosen4, idImg, "platform"));
-                        // } 
-                        // if (value == 5 ) {
-                        //     tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, chosen5, idImg, "platform"));
-                        // } 
-                        // if (value == 6 ) {
-                        //     tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, chosen6, idImg, "escape"));
-                        // } 
                         b += 1;
                         if (i == d) {
                             b-=1;
