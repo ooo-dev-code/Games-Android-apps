@@ -1025,8 +1025,6 @@ private void drawHearts(Graphics g) {
             gameOver = true;
         }
 
-        System.out.println("Center: "+center+ " Up: " + nextUp + " Down: " + nextDown + " Right: " + nextRight + " Left: " + nextLeft);
-
         repaint();
     }
     
