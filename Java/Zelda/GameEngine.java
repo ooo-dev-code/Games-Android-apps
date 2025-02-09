@@ -166,7 +166,7 @@ public class GameEngine extends JPanel implements ActionListener, KeyListener{
                     writer.write(data + ",");
                 }
                 writer.flush();
-            } catch (java.io.IOException ex) {  
+            } catch (java.io.IOException ex) {
                 ex.printStackTrace();
 
             }
