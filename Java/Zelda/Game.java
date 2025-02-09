@@ -31,13 +31,22 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     int p = 0;
     int b = 0;
     private long lastKeyPressTime = 0; 
-    private final int cooldownTime = 200;
+    private final int cooldownTime = 50;
     boolean nextUp = false;
     boolean nextDown = false;
     boolean nextRight = false;
     boolean nextLeft = false;
     boolean center = true;
+    boolean zeroY = false;
+    boolean zeroX = false;
+    boolean maxY = false;
+    boolean maxX = false;
     boolean gameOver = false;
+
+    int beatenTile2 = 0;
+    int beatenTile3 = 0;
+    int beatenTile4 = 0;
+    int beatenTile5 = 0;
     
     class Character {
         Tile tile;
@@ -72,33 +81,34 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     }
 
     int indexL = 0;
-    Image idle1_Left = new ImageIcon(getClass().getResource("./assets/png/Movement/Left/idle1_Left.png")).getImage();
-    Image idle2_Left = new ImageIcon(getClass().getResource("./assets/png/Movement/Left/idle2_Left.png")).getImage();
-    Image idle3_Left = new ImageIcon(getClass().getResource("./assets/png/Movement/Left/idle3_Left.png")).getImage();
-    Image idle4_Left = new ImageIcon(getClass().getResource("./assets/png/Movement/Left/idle4_Left.png")).getImage();
+    Image idle1_Left = new ImageIcon(getClass().getResource("./assets/Link/Movement/Left/idle1_Left.png")).getImage();
+    Image idle2_Left = new ImageIcon(getClass().getResource("./assets/Link/Movement/Left/idle2_Left.png")).getImage();
+    Image idle3_Left = new ImageIcon(getClass().getResource("./assets/Link/Movement/Left/idle3_Left.png")).getImage();
+    Image idle4_Left = new ImageIcon(getClass().getResource("./assets/Link/Movement/Left/idle4_Left.png")).getImage();
 
     int indexR = 0;
-    Image idle1_Right = new ImageIcon(getClass().getResource("./assets/png/Movement/Right/idle1_Right.png")).getImage();
-    Image idle2_Right = new ImageIcon(getClass().getResource("./assets/png/Movement/Right/idle2_Right.png")).getImage();
-    Image idle3_Right = new ImageIcon(getClass().getResource("./assets/png/Movement/Right/idle3_Right.png")).getImage();
-    Image idle4_Right = new ImageIcon(getClass().getResource("./assets/png/Movement/Right/idle4_Right.png")).getImage();
+    Image idle1_Right = new ImageIcon(getClass().getResource("./assets/Link/Movement/Right/idle1_Right.png")).getImage();
+    Image idle2_Right = new ImageIcon(getClass().getResource("./assets/Link/Movement/Right/idle2_Right.png")).getImage();
+    Image idle3_Right = new ImageIcon(getClass().getResource("./assets/Link/Movement/Right/idle3_Right.png")).getImage();
+    Image idle4_Right = new ImageIcon(getClass().getResource("./assets/Link/Movement/Right/idle4_Right.png")).getImage();
 
     int indexF = 0;
-    Image idle1_Front = new ImageIcon(getClass().getResource("./assets/png/Movement/Front/idle1_Front.png")).getImage();
-    Image idle2_Front = new ImageIcon(getClass().getResource("./assets/png/Movement/Front/idle2_Front.png")).getImage();
-    Image idle3_Front = new ImageIcon(getClass().getResource("./assets/png/Movement/Front/idle3_Front.png")).getImage();
-    Image idle4_Front = new ImageIcon(getClass().getResource("./assets/png/Movement/Front/idle4_Front.png")).getImage();
+    Image idle1_Front = new ImageIcon(getClass().getResource("./assets/Link/Movement/Front/idle1_Front.png")).getImage();
+    Image idle2_Front = new ImageIcon(getClass().getResource("./assets/Link/Movement/Front/idle2_Front.png")).getImage();
+    Image idle3_Front = new ImageIcon(getClass().getResource("./assets/Link/Movement/Front/idle3_Front.png")).getImage();
+    Image idle4_Front = new ImageIcon(getClass().getResource("./assets/Link/Movement/Front/idle4_Front.png")).getImage();
     
     int indexB = 0;
-    Image idle1_Back = new ImageIcon(getClass().getResource("./assets/png/Movement/Back/idle1_Back.png")).getImage();
-    Image idle2_Back = new ImageIcon(getClass().getResource("./assets/png/Movement/Back/idle2_Back.png")).getImage();
-    Image idle3_Back = new ImageIcon(getClass().getResource("./assets/png/Movement/Back/idle3_Back.png")).getImage();
-    Image idle4_Back = new ImageIcon(getClass().getResource("./assets/png/Movement/Back/idle4_Back.png")).getImage();
+    Image idle1_Back = new ImageIcon(getClass().getResource("./assets/Link/Movement/Back/idle1_Back.png")).getImage();
+    Image idle2_Back = new ImageIcon(getClass().getResource("./assets/Link/Movement/Back/idle2_Back.png")).getImage();
+    Image idle3_Back = new ImageIcon(getClass().getResource("./assets/Link/Movement/Back/idle3_Back.png")).getImage();
+    Image idle4_Back = new ImageIcon(getClass().getResource("./assets/Link/Movement/Back/idle4_Back.png")).getImage();
 
     ArrayList<Image> front = new ArrayList<Image>();
     ArrayList<Image> right = new ArrayList<Image>();
     ArrayList<Image> left = new ArrayList<Image>();
     ArrayList<Image> back = new ArrayList<Image>();
+    ArrayList<Image> attFront = new ArrayList<Image>();
 
     ArrayList<Tile> tiles = new ArrayList<Tile>();
     ArrayList<Tile> tiles2 = new ArrayList<Tile>();
@@ -121,15 +131,31 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     Image buisson = new ImageIcon(getClass().getResource("./assets/Map/buisson.png")).getImage();
     Image fontaine1 = new ImageIcon(getClass().getResource("./assets/Map/fontaine1.png")).getImage();
     Image home = new ImageIcon(getClass().getResource("./assets/Map/home.png")).getImage();
+    Image png = new ImageIcon(getClass().getResource("./assets/png/Movement/Front/idle1_Front.png")).getImage();
+    Image rock = new ImageIcon(getClass().getResource("./assets/Map/rock.png")).getImage();
+    Image tp = new ImageIcon(getClass().getResource("./assets/Map/tp.png")).getImage();
+    Image monster1 = new ImageIcon(getClass().getResource("./assets/Monsters/monster1.png")).getImage();
+    Image monster2 = new ImageIcon(getClass().getResource("./assets/Monsters/monster2.png")).getImage();
 
     Tile playerTile = new Tile((int)(boardWidth/2), (int)(boardHeight/2), tileSize, 48, idle1_Front, 0, "character");
     Character player = new Character(playerTile, 20, 20, 5);
     int playerVelocityX = 0;
     int playerVelocityY = 0;
+    boolean openInventory = false;
+    int money = 0;
+    int keyCount = 0;
+    String playerClass = "SwordsMan";
 
     int indexA = 0;
-    Image attack1 = new ImageIcon(getClass().getResource("./assets/Link/Attack/att1.png")).getImage();
-
+    Image defense = new ImageIcon(getClass().getResource("./assets/Link/Attack/def.png")).getImage();
+    
+    boolean attacking = false;
+    Tile attackRange = new Tile(playerTile.x-50, playerTile.y-50, playerTile.width+50, playerTile.height+50, null, 0, "player");
+    Image attFront1 = new ImageIcon(getClass().getResource("./assets/Link/Attack/Front/idle1_Front.png")).getImage();
+    Image attFront2 = new ImageIcon(getClass().getResource("./assets/Link/Attack/Front/idle2_Front.png")).getImage();
+    
+    Image inventory = new ImageIcon(getClass().getResource("./assets/Link/Objects/menu.png")).getImage();
+    Image openedInventory = new ImageIcon(getClass().getResource("./assets/Link/Objects/Inventory.png")).getImage();
     Image heart1Tile = new ImageIcon(getClass().getResource("./assets/Link/Objects/heart1.png")).getImage();
     Image heart2Tile = new ImageIcon(getClass().getResource("./assets/Link/Objects/heart2.png")).getImage();
     Image heart3Tile = new ImageIcon(getClass().getResource("./assets/Link/Objects/heart3.png")).getImage();
@@ -158,571 +184,6 @@ public class Game extends JPanel implements ActionListener, KeyListener {
         tiles7.add(new Tile(0, 0, boardWidth, boardHeight, bg, 0, "background"));
         tiles8.add(new Tile(0, 0, boardWidth, boardHeight, bg, 0, "background"));
         tiles9.add(new Tile(0, 0, boardWidth, boardHeight, bg, 0, "background"));
-        
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data1.csv"))) {
-            String line;
-            
-            p = 0;
-            b = 0;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles.add(new Tile(p * tileSize, tiles.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data2.csv"))) {
-            String line;
-            
-            p = 0;
-            b = 0;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles2.add(new Tile(p * tileSize, tiles2.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles2.add(new Tile(p * tileSize, tiles2.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles2.add(new Tile(p * tileSize, tiles2.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles2.add(new Tile(p * tileSize, tiles2.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles2.add(new Tile(p * tileSize, tiles2.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles2.add(new Tile(p * tileSize, tiles2.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles2.add(new Tile(p * tileSize, tiles2.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles2.add(new Tile(p * tileSize, tiles2.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data3.csv"))) {
-            String line;
-            
-            p = 0;
-            b = 0;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles3.add(new Tile(p * tileSize, tiles3.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles3.add(new Tile(p * tileSize, tiles3.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles3.add(new Tile(p * tileSize, tiles3.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles3.add(new Tile(p * tileSize, tiles3.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles3.add(new Tile(p * tileSize, tiles3.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles3.add(new Tile(p * tileSize, tiles3.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles3.add(new Tile(p * tileSize, tiles3.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles3.add(new Tile(p * tileSize, tiles3.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data4.csv"))) {
-            String line;
-            
-            p = 0;
-            b = 0;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles4.add(new Tile(p * tileSize, tiles4.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles4.add(new Tile(p * tileSize, tiles4.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles4.add(new Tile(p * tileSize, tiles4.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles4.add(new Tile(p * tileSize, tiles4.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles4.add(new Tile(p * tileSize, tiles4.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles4.add(new Tile(p * tileSize, tiles4.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles4.add(new Tile(p * tileSize, tiles4.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles4.add(new Tile(p * tileSize, tiles4.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data5.csv"))) {
-            String line;
-            
-            p = 0;
-            b = 0;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles5.add(new Tile(p * tileSize, tiles5.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles5.add(new Tile(p * tileSize, tiles5.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles5.add(new Tile(p * tileSize, tiles5.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles5.add(new Tile(p * tileSize, tiles5.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles5.add(new Tile(p * tileSize, tiles5.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles5.add(new Tile(p * tileSize, tiles5.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles5.add(new Tile(p * tileSize, tiles5.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles5.add(new Tile(p * tileSize, tiles5.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data6.csv"))) {
-            String line;
-            
-            p = 0;
-            b = 0;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles6.add(new Tile(p * tileSize, tiles6.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles6.add(new Tile(p * tileSize, tiles6.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles6.add(new Tile(p * tileSize, tiles6.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles6.add(new Tile(p * tileSize, tiles6.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles6.add(new Tile(p * tileSize, tiles6.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles6.add(new Tile(p * tileSize, tiles6.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles6.add(new Tile(p * tileSize, tiles6.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles6.add(new Tile(p * tileSize, tiles6.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data7.csv"))) {
-            String line;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles7.add(new Tile(p * tileSize, tiles7.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles7.add(new Tile(p * tileSize, tiles7.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles7.add(new Tile(p * tileSize, tiles7.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles7.add(new Tile(p * tileSize, tiles7.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles7.add(new Tile(p * tileSize, tiles7.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles7.add(new Tile(p * tileSize, tiles7.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles7.add(new Tile(p * tileSize, tiles7.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles7.add(new Tile(p * tileSize, tiles7.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data8.csv"))) {
-            String line;
-            
-            p = 0;
-            b = 0;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles8.add(new Tile(p * tileSize, tiles8.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles8.add(new Tile(p * tileSize, tiles8.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles8.add(new Tile(p * tileSize, tiles8.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles8.add(new Tile(p * tileSize, tiles8.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles8.add(new Tile(p * tileSize, tiles8.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles8.add(new Tile(p * tileSize, tiles8.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles8.add(new Tile(p * tileSize, tiles8.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles8.add(new Tile(p * tileSize, tiles8.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader("Zelda\\tile_data9.csv"))) {
-            String line;
-            
-            p = 0;
-            b = 0;
-            int d = 39;
-            int g = 18;
-            int times = 0;
-            int bv = 0;
-            int g2 = 0;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++) {
-                    
-                        int value = Integer.parseInt(values[i]);
-                        if (value == 1 ) {
-                            tiles9.add(new Tile(p * tileSize, tiles9.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass, value, "bg"));
-                        }
-                        if (value == 2 ) {
-                            tiles9.add(new Tile(p * tileSize, tiles9.size() / rows * tileSize+tileSize*b, tileSize, tileSize, grass2, value, "bg"));
-                        }
-                        if (value == 3 ) {
-                            tiles9.add(new Tile(p * tileSize, tiles9.size() / rows * tileSize+tileSize*b, tileSize, tileSize, buisson, value, "collision"));
-                        } 
-                        if (value == 4 ) {
-                            tiles9.add(new Tile(p * tileSize, tiles9.size() / rows * tileSize+tileSize*b, tileSize, tileSize, flaque, value, "collision"));
-                        }
-                        if (value == 5 ) {
-                            tiles9.add(new Tile(p * tileSize, tiles9.size() / rows * tileSize+tileSize*b, tileSize, tileSize, cultureTransition, value, "bg"));
-                        } 
-                        if (value == 6 ) {
-                            tiles9.add(new Tile(p * tileSize, tiles9.size() / rows * tileSize+tileSize*b, tileSize*2, tileSize*2, fontaine1, value, "bg"));
-                        } 
-                        if (value == 7 ) {
-                            tiles9.add(new Tile(p * tileSize, tiles9.size() / rows * tileSize+tileSize*b, tileSize*4, tileSize*4, home, value, "collision"));
-                        } 
-                        if (value == 9 ) {
-                            tiles9.add(new Tile(p * tileSize, tiles9.size() / rows * tileSize+tileSize*b, tileSize, tileSize, culture, value, "bg"));
-                        } 
-                        b += 1;
-                        if (i == d) {
-                            b-=1;
-                            d += 40;
-                        }
-                        if ( i == g) {
-                            p += 1;
-                            g += 19;
-                            times += 1;
-                            b = bv;
-                            if (times == 2) {
-                                bv -= 1;
-                                times = 0;
-                            }
-                            if (i == 398+38*g2) {
-                                b += 1;
-                                g2+=1;
-                            }
-                        }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         gameLoop = new Timer(750/60, this);
         gameLoop.start();
@@ -746,106 +207,660 @@ public class Game extends JPanel implements ActionListener, KeyListener {
         left.add(idle2_Left);
         left.add(idle3_Left);
         left.add(idle4_Left);
+        
+        attFront.add(attFront1);
+        attFront.add(attFront2);
 
+        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+                if (x > 64*5+20 && x <64*5+20+64*3 && y < 54) {
+                    openInventory = true;
+                }
+            }
+        });
+
+        loadTiles("Zelda/tile_data1.csv", tiles);
+        loadTiles("Zelda/tile_data2.csv", tiles2);
+        loadTiles("Zelda/tile_data3.csv", tiles3);
+        loadTiles("Zelda/tile_data4.csv", tiles4);
+        loadTiles("Zelda/tile_data5.csv", tiles5);
+        loadTiles("Zelda/tile_data6.csv", tiles6);
+        loadTiles("Zelda/tile_data7.csv", tiles7);
+        loadTiles("Zelda/tile_data8.csv", tiles8);
+        loadTiles("Zelda/tile_data9.csv", tiles9);
+    }
+
+    private void loadTiles(String filePath, List<Tile> tileList) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int p = 0, b = 0, d = 39, g = 18, times = 0, bv = 0, g2 = 0;
+            
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                for (int i = 0; i < values.length; i++) {
+                    int value = Integer.parseInt(values[i]);
+                    Image img = getImg(value);
+                    String type = getType(value);
+                    
+                    int width = (value == 6 || value == 12 || value == 13) ? tileSize * 2 : (value == 7 ? tileSize * 4 : tileSize);
+                    int height = width;
+                    
+                    tileList.add(new Tile(p * tileSize, tileList.size() / rows * tileSize + tileSize * b, width, height, img, value, type));
+                    
+                    b += 1;
+                    if (i == d) { b -= 1; d += 40; }
+                    if (i == g) {
+                        p += 1; g += 19; times += 1; b = bv;
+                        if (times == 2) { bv -= 1; times = 0; }
+                        if (i == 398 + 38 * g2) { b += 1; g2 += 1; }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Image getImg(int value) {
+        return switch (value) {
+            case 1 -> grass;
+            case 2 -> grass2;
+            case 3 -> buisson;
+            case 4 -> flaque;
+            case 5 -> cultureTransition;
+            case 6 -> fontaine1;
+            case 7 -> home;
+            case 9 -> culture;
+            case 10 -> png;
+            case 11 -> rock;
+            case 12 -> tp;
+            case 13 -> monster1;
+            default -> null;
+        };
+    }
+    private String getType(int value) {
+        return switch (value) {
+            case 3, 4, 6, 7, 10, 11 -> "collision";
+            case 12 -> "tp";
+            case 13 -> "monster";
+            default -> "bg";
+        };
     }
 
  @Override
 protected void paintComponent(Graphics g) {
     super.paintComponent(g);
+    List<Tile> tilesCopy = new ArrayList<>(tiles); // Copy the list
+    List<Tile> tiles2Copy = new ArrayList<>(tiles2); // Copy the list
+    List<Tile> tiles3Copy = new ArrayList<>(tiles3); // Copy the list
+    List<Tile> tiles4Copy = new ArrayList<>(tiles4); // Copy the list
+    List<Tile> tiles5Copy = new ArrayList<>(tiles5); // Copy the list
+    List<Tile> tiles6Copy = new ArrayList<>(tiles6); // Copy the list
+    List<Tile> tiles7Copy = new ArrayList<>(tiles7); // Copy the list
+    List<Tile> tiles8Copy = new ArrayList<>(tiles8); // Copy the list
+    List<Tile> tiles9Copy = new ArrayList<>(tiles9); // Copy the list
 
-    List<Tile> currentTiles = getCurrentTileList();
+    if (center) {
+        tile(tilesCopy, true, g);
 
-    drawTiles(g, currentTiles, true);
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
 
-    g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+        tile(tilesCopy, false, g);
 
-    drawTiles(g, currentTiles, false);
-
-    drawHearts(g);
-}
-
-private List<Tile> getCurrentTileList() {
-    if (center) return tiles;
-    if (nextDown && !nextRight && !nextLeft) return tiles3;
-    if (nextUp && !nextRight && !nextLeft) return tiles2;
-    if (nextRight && !nextUp && !nextDown) return tiles4;
-    if (nextLeft && !nextUp && !nextDown) return tiles5;
-    if (nextUp && nextRight && !nextLeft) return tiles6;
-    if (nextUp && !nextRight && nextLeft) return tiles7;
-    if (nextDown && nextRight && !nextLeft) return tiles8;
-    if (nextDown && !nextRight && nextLeft) return tiles9;
-    
-    return tiles; 
-}
-
-private void drawTiles(Graphics g, List<Tile> tileList, boolean isBackground) {
-    for (Tile tile : tileList) {
-        if ((isBackground && tile.idImg < 6) || (!isBackground && tile.idImg > 6)) {
-            if (!"player".equals(tile.type)) { 
-                g.drawImage(tile.img, tile.x, tile.y, tile.width, tile.height, null);
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
             }
+            g.drawImage(playerTile.img, (64*5+50)+ 75, 66 + 75, 75, 75, null);
+        }
+
+    } 
+    else if (!center && nextUp && !nextRight && !nextLeft) {
+
+        
+        tile(tiles2Copy, true, g);
+
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+
+        tile(tiles2Copy, false, g);
+        
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
+            }
+            g.drawImage(playerTile.img, (64*5+50)+ 75, 66, 75, 75, null);
+        }
+
+
+    } else if (nextDown && !nextRight && !nextLeft && !center) {
+
+        
+        tile(tiles3Copy, true, g);
+
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+
+        tile(tiles3Copy, false, g);
+        
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
+            }
+            g.drawImage(playerTile.img, (64*5+50)+ 75, 66 + 75*2, 75, 75, null);
+        }
+
+
+    }  else if (!center && nextRight && !nextUp && !nextDown) {
+
+        
+        tile(tiles4Copy, true, g);
+
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+
+        tile(tiles4Copy, false, g);
+        
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
+            }
+            g.drawImage(playerTile.img, (64*5+50), 66 + 75, 75, 75, null);
+        }
+
+
+    }  else if (!center && nextLeft && !nextUp && !nextDown) {
+
+        
+        tile(tiles5Copy, true, g);
+
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+
+        tile(tiles5Copy, false, g);
+        
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
+            }
+            g.drawImage(playerTile.img, (64*5+50)+ 75*2, 66 + 75, 75, 75, null);
+        }
+    } else if (!center && nextUp && nextRight) {
+
+        
+        tile(tiles6Copy, true, g);
+
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+
+        tile(tiles6Copy, false, g);
+        
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
+            }
+            g.drawImage(playerTile.img, (64*5+50)+ 75*2, 66, 75, 75, null);
+        }
+    } else if (!center && nextUp && !nextRight && nextLeft) {
+
+        
+        tile(tiles7Copy, true, g);
+
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+
+        tile(tiles7Copy, false, g);
+        
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
+            }
+            g.drawImage(playerTile.img, (64*5+50), 66, 75, 75, null);
+        }
+    } else if (!center && nextDown && nextRight && !nextLeft) {
+
+        
+        tile(tiles8Copy, true, g);
+
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+
+        tile(tiles8Copy, false, g);
+        
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
+            }
+            g.drawImage(playerTile.img, (64*5+50)+ 75*2, 66 + 75*2, 75, 75, null);
+        }
+    } else if (!center && nextDown && !nextRight && nextLeft) {
+
+        
+        tile(tiles9Copy, true, g);
+
+        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
+
+        tile(tiles9Copy, false, g);
+        
+        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
+        if (openInventory) {
+            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                    g.setColor(Color.BLACK);
+                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
+                }
+            }
+            g.drawImage(playerTile.img, (64*5+50), 66 + 75*2, 75, 75, null);
         }
     }
-}
-
-private void drawHearts(Graphics g) {
     Tile[] hearts = {heart, heart2, heart3, heart4, heart5};
     for (int i = 0; i < hearts.length; i++) {
         g.drawImage(hearts[i].img, hearts[i].x + 64 * i, hearts[i].y, hearts[i].width, hearts[i].height, null);
     }
 }
 
-
+public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
+    for (Tile tile : tileList) {
+        if (isBackground) {
+            if (tile.idImg < 6) {
+                g.drawImage(tile.img, tile.x, tile.y, tile.width, tile.height, null);
+            }
+        } else {
+            if (tile.idImg >= 6) {
+                g.drawImage(tile.img, tile.x, tile.y, tile.width, tile.height, null);
+            }
+        }
+    }
+}
 
     private boolean checkCollision() {
         Rectangle futureBounds = new Rectangle(playerTile.x+5, playerTile.y+5, playerTile.width, playerTile.height);
-        for (Tile tile : tiles) {
+        
+        List<Tile> tilesCopy = new ArrayList<>(tiles); // Copy the list
+        List<Tile> tiles2Copy = new ArrayList<>(tiles2); // Copy the list
+        List<Tile> tiles3Copy = new ArrayList<>(tiles3); // Copy the list
+        List<Tile> tiles4Copy = new ArrayList<>(tiles4); // Copy the list
+        List<Tile> tiles5Copy = new ArrayList<>(tiles5); // Copy the list
+        List<Tile> tiles6Copy = new ArrayList<>(tiles6); // Copy the list
+        List<Tile> tiles7Copy = new ArrayList<>(tiles7); // Copy the list
+        List<Tile> tiles8Copy = new ArrayList<>(tiles8); // Copy the list
+        List<Tile> tiles9Copy = new ArrayList<>(tiles9); // Copy the list
+
+        if (attacking) {
+            futureBounds = new Rectangle(playerTile.x+5-tileSize, playerTile.y-tileSize, playerTile.width+tileSize*2, playerTile.height+tileSize*2);
+        } else {
+            futureBounds = new Rectangle(playerTile.x+5, playerTile.y, playerTile.width, playerTile.height);
+        }
+
+        for (Tile tile : tilesCopy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && center) {
                 return true;
             }
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && center) {
+                if (tile.y > 2*tileSize) {
+                    System.out.println("Bottom");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = true;
+                    nextUp = false;
+                    center = false;
+                    maxY = true;
+                }
+                if (tile.y < 2*tileSize) {
+                    System.out.println("Top");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = true;
+                    center = false;
+                    zeroY = true;
+                }
+                if (tile.x > boardHeight-2*tileSize) {
+                    System.out.println("Right");
+                    nextRight = true;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = false;
+                    center = false;
+                    zeroX = true;
+                }
+                
+                if (tile.x < 2*tileSize) {
+                    System.out.println("Left");
+                    nextLeft = true;
+                    nextDown = false;
+                    nextUp = false;
+                    center = false;
+                    maxX = true;
+                }
+            }
         }
-        for (Tile tile : tiles2) {
+
+
+
+
+        for (Tile tile : tiles2Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && !nextRight && !nextLeft) {
                 return true;
             }
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextUp && !nextRight && !nextLeft && beatenTile2 == 3) {
+                if (tile.y < 4*tileSize) {
+                    System.out.println("Top");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = false;
+                    center = true;
+                    zeroY = true;
+                }
+                if (tile.x < 2*tileSize) {
+                    System.out.println("Left");
+                    nextRight = false;
+                    nextLeft = true;
+                    nextDown = false;
+                    nextUp = true;
+                    center = false;
+                    maxX = true;
+                }
+                
+                if (tile.x > boardWidth-5*tileSize) {
+                    System.out.println("Right");
+                    nextRight = true;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = true;
+                    center = false;
+                    zeroX = true;
+                }
+            }
+            if ("monster".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && !nextRight && !nextLeft) {
+                if (!attacking) {
+                    if (tile.x > playerTile.x) {
+                        playerTile.x -= tileSize;
+                    } else {
+                        playerTile.x += tileSize;
+                    }
+                    player.health -= 1;
+                } else {
+
+                    if (tile.x < playerTile.x) {
+                        tile.x -= tileSize;
+                        tile.img = monster2;
+                        tile.type = "beaten";
+                    } else {
+                        tile.x += tileSize;
+                        tile.img = monster2;
+                        tile.type = "beaten";
+                    }
+                    beatenTile2 += 1;
+                    money += 1;
+                    System.out.println(beatenTile2);
+
+                }
+            }
         }
-        for (Tile tile : tiles3) {
+
+
+
+
+        for (Tile tile : tiles3Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextDown && !nextRight && !nextLeft) {
                 return true;
             }
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextDown && !nextRight && !nextLeft && beatenTile3 == 3) {
+                if (tile.y < 2*tileSize) {
+                    System.out.println("Top");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = false;
+                    center = true;
+                    zeroY = true;
+                }
+                if (tile.x > boardWidth-tileSize*2) {
+                    System.out.println("Right");
+                    nextRight = true;
+                    nextLeft = false;
+                    nextDown = true;
+                    nextUp = false;
+                    center = false;
+                    zeroX = true;
+                }
+                if (tile.x < tileSize*2) {
+                    System.out.println("Left");
+                    nextRight = false;
+                    nextLeft = true;
+                    nextDown = true;
+                    nextUp = false;
+                    center = false;
+                    maxX = true;
+                }
+            }
+            if ("monster".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextDown && !nextRight && !nextLeft) {
+                if (!attacking) {
+                    if (tile.x > playerTile.x) {
+                        playerTile.x -= tileSize;
+                    } else {
+                        playerTile.x += tileSize;
+                    }
+                    player.health -= 1;
+                } else {
+
+                    if (tile.x < playerTile.x) {
+                        tile.x -= tileSize;
+                        tile.img = monster2;
+                        tile.type = "beaten";
+                    } else {
+                        tile.x += tileSize;
+                        tile.img = monster2;
+                        tile.type = "beaten";
+                    }
+                    beatenTile3 += 1;
+                    money += 1;
+                    System.out.println(beatenTile3);
+
+                }
+            }
         }
         
-        for (Tile tile : tiles4) {
+        
+        for (Tile tile : tiles4Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextRight && !nextUp && !nextDown) {
                 return true;
             }
-        }
-        
-        for (Tile tile : tiles5) {
-            if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextLeft && !nextUp && !nextDown) {
-                return true;
+
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextRight && !nextUp && !nextDown && beatenTile4 == 3) {
+                if (tile.y < 4*tileSize) {
+                    System.out.println("Top");
+                    nextRight = true;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = true;
+                    center = false;
+                    zeroY = true;
+                }
+                if (tile.y > boardHeight-4*tileSize) {
+                    System.out.println("Bottom");
+                    nextRight = true;
+                    nextLeft = false;
+                    nextDown = true;
+                    nextUp = false;
+                    center = false;
+                    maxY = true;
+                }
+                if (tile.x < 2*tileSize) {
+                    System.out.println("Left");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = false;
+                    center = true;
+                    maxX = true;
+                }
+            }
+            if ("monster".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextRight && !nextUp && !nextDown) {
+                if (!attacking) {
+                    if (tile.x > playerTile.x) {
+                        playerTile.x -= tileSize;
+                    } else {
+                        playerTile.x += tileSize;
+                    }
+                    player.health -= 1;
+                } else {
+
+                    if (tile.x < playerTile.x) {
+                        tile.x -= tileSize;
+                        tile.img = monster2;
+                        tile.type = "beaten";
+                    } else {
+                        tile.x += tileSize;
+                        tile.img = monster2;
+                        tile.type = "beaten";
+                    }
+                    beatenTile4 += 1;
+                    money += 1;
+                    System.out.println(beatenTile4);
+
+                }
             }
         }
         
-        for (Tile tile : tiles6) {
+        for (Tile tile : tiles5Copy) {
+            if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextLeft && !nextUp && !nextDown) {
+                return true;
+            }
+
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextLeft && !nextUp && !nextDown && beatenTile5 == 3) {
+                if (tile.y < 4*tileSize) {
+                    System.out.println("Top");
+                    nextRight = false;
+                    nextLeft = true;
+                    nextDown = false;
+                    nextUp = true;
+                    center = false;
+                    zeroY = true;
+                }
+                if (tile.y > boardHeight-4*tileSize) {
+                    System.out.println("Bottom");
+                    nextRight = false;
+                    nextLeft = true;
+                    nextDown = true;
+                    nextUp = false;
+                    center = false;
+                    zeroY = true;
+                }
+                if (tile.x > boardWidth-2*tileSize) {
+                    System.out.println("Right");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = false;
+                    center = true;
+                    zeroX = true;
+                }
+            }
+            
+            if ("monster".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextLeft && !nextUp && !nextDown) {
+                if (!attacking) {
+                    if (tile.x > playerTile.x) {
+                        playerTile.x -= tileSize;
+                    } else {
+                        playerTile.x += tileSize;
+                    }
+                    player.health -= 1;
+                } else {
+
+                    if (tile.x < playerTile.x) {
+                        tile.x -= tileSize;
+                        tile.img = monster2;
+                        tile.type = "beaten";
+                    } else {
+                        tile.x += tileSize;
+                        tile.img = monster2;
+                        tile.type = "beaten";
+                    }
+                    beatenTile5 += 1;
+                    money += 1;
+                    System.out.println(beatenTile5);
+
+                }
+            }
+        }
+        
+        for (Tile tile : tiles6Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && nextRight && !nextLeft) {
                 return true;
             }
         }
         
-        for (Tile tile : tiles7) {
+        for (Tile tile : tiles7Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && !nextRight && nextLeft) {
                 return true;
             }
         }
         
-        for (Tile tile : tiles8) {
+        for (Tile tile : tiles8Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextDown && nextRight && !nextLeft) {
                 return true;
             }
         }
         
-        for (Tile tile : tiles9) {
+        for (Tile tile : tiles9Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextDown && !nextRight && nextLeft) {
                 return true;
             }
@@ -855,7 +870,32 @@ private void drawHearts(Graphics g) {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        long currentTime = System.currentTimeMillis();
+        
+        if (currentTime - lastKeyPressTime < cooldownTime) {
+            return;
+        }
+    
+        lastKeyPressTime = currentTime; 
+
+        int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_M) {
+            playerTile.img = defense;
+        }
+        if (key == KeyEvent.VK_X) {
+            openInventory = false;
+        }
+        if (key == KeyEvent.VK_N) {
+            attacking = true;
+            playerTile.img = attFront.get(indexA);
+
+            indexA += 1;
+            if (indexA > 1) {
+                indexA = 0;
+            }
+            repaint();
+        }
     }
 
     @Override
@@ -871,7 +911,20 @@ private void drawHearts(Graphics g) {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_M) {
-            playerTile.img = attack1;
+            playerTile.img = defense;
+        }
+        if (key == KeyEvent.VK_X) {
+            openInventory = false;
+        }
+        if (key == KeyEvent.VK_N) {
+            attacking = true;
+            playerTile.img = attFront.get(indexA);
+
+            indexA += 1;
+            if (indexA > 1) {
+                indexA = 0;
+            }
+            repaint();
         }
 
         if (key == KeyEvent.VK_A) {
@@ -879,7 +932,7 @@ private void drawHearts(Graphics g) {
         }
 
         if (key == KeyEvent.VK_LEFT) {
-            playerVelocityX = -2;
+            playerVelocityX = -3;
 
             playerTile.img = left.get(indexL);
 
@@ -890,7 +943,7 @@ private void drawHearts(Graphics g) {
             repaint();
         }
         if (key == KeyEvent.VK_RIGHT) {
-            playerVelocityX = 2;
+            playerVelocityX = 3;
 
             playerTile.img = idle1_Right;playerTile.img = right.get(indexR);
 
@@ -901,7 +954,7 @@ private void drawHearts(Graphics g) {
             repaint();
         }
         if (key == KeyEvent.VK_DOWN) {
-            playerVelocityY = 2;
+            playerVelocityY = 3;
 
             playerTile.img = front.get(indexF);
 
@@ -912,7 +965,7 @@ private void drawHearts(Graphics g) {
             repaint();
         }
         if (key == KeyEvent.VK_UP) {
-            playerVelocityY = -2;
+            playerVelocityY = -3;
 
             playerTile.img = back.get(indexB);
 
@@ -928,8 +981,14 @@ private void drawHearts(Graphics g) {
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_M) {
+        if (key == KeyEvent.VK_M || key == KeyEvent.VK_N) {
             playerTile.img = front.get(0);
+            attacking = false;
+        }
+
+        if (key == KeyEvent.VK_G) {
+            center = false;
+            nextDown = true;
         }
 
         if (key == KeyEvent.VK_LEFT) {
@@ -948,8 +1007,25 @@ private void drawHearts(Graphics g) {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        playerTile.x += playerVelocityX*2;
-        playerTile.y += playerVelocityY*2;
+        playerTile.x += playerVelocityX;
+        playerTile.y += playerVelocityY;
+
+        if (zeroY) {
+            playerTile.y = boardHeight-4*tileSize;
+            zeroY = false;
+        }
+        if (maxY) {
+            playerTile.y = 2*tileSize;
+            maxY = false;
+        }
+        if (zeroX) {
+            playerTile.x = 2*tileSize;
+            zeroX = false;
+        }
+        if (maxX) {
+            playerTile.x = boardWidth-4*tileSize;
+            maxX = false;
+        }
 
         if (checkCollision()) {
             playerTile.x -= playerVelocityX;
