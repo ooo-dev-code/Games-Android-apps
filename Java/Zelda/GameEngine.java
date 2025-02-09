@@ -106,6 +106,22 @@ public class GameEngine extends JPanel implements ActionListener, KeyListener{
             chosen = new ImageIcon(getClass().getResource("./assets/Map/culture.png")).getImage();
             idImg = 9;
         }
+        if (e.getKeyCode() == KeyEvent.VK_8) {
+            chosen = new ImageIcon(getClass().getResource("./assets/png/Movement/Front/idle1_Front.png")).getImage();
+            idImg = 10;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_9) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Map/rock.png")).getImage();
+            idImg = 11;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_Z) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Map/tp.png")).getImage();
+            idImg = 12;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_E) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Monsters/monster1.png")).getImage();
+            idImg = 13;
+        }
     }
 
     @Override
@@ -150,7 +166,7 @@ public class GameEngine extends JPanel implements ActionListener, KeyListener{
                     writer.write(data + ",");
                 }
                 writer.flush();
-            } catch (java.io.IOException ex) {
+            } catch (java.io.IOException ex) {  
                 ex.printStackTrace();
 
             }
