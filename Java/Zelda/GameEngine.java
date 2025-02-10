@@ -3,7 +3,6 @@ package Zelda;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -121,6 +120,30 @@ public class GameEngine extends JPanel implements ActionListener, KeyListener{
         if (e.getKeyCode() == KeyEvent.VK_E) {
             chosen = new ImageIcon(getClass().getResource("./assets/Monsters/monster1.png")).getImage();
             idImg = 13;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            chosen = new ImageIcon(getClass().getResource("./assets/png/Movement/Front/idle1_Front.png")).getImage();
+            idImg = 14;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_T) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Map/treasure.png")).getImage();
+            idImg = 15;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_Y) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Map/superMarket.png")).getImage();
+            idImg = 16;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_U) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Map/waterDeco.png")).getImage();
+            idImg = 17;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_I) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Map/water.png")).getImage();
+            idImg = 18;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_O) {
+            chosen = new ImageIcon(getClass().getResource("./assets/Map/door.png")).getImage();
+            idImg = 19;
         }
     }
 
