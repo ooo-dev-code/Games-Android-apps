@@ -1,11 +1,11 @@
 package Zelda;
 
 import java.awt.Color;
-import java.awt.Dimension; 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent; 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -42,6 +42,11 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     boolean maxY = false;
     boolean maxX = false;
     boolean gameOver = false;
+    boolean healer = false;
+    boolean changeSkin = false;
+    boolean treasureOpen = false;
+    boolean doorOpen = false;
+    boolean FinalBoss = false;
 
     int beatenTile2 = 0;
     int beatenTile3 = 0;
@@ -136,6 +141,11 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     Image tp = new ImageIcon(getClass().getResource("./assets/Map/tp.png")).getImage();
     Image monster1 = new ImageIcon(getClass().getResource("./assets/Monsters/monster1.png")).getImage();
     Image monster2 = new ImageIcon(getClass().getResource("./assets/Monsters/monster2.png")).getImage();
+    Image treasure = new ImageIcon(getClass().getResource("./assets/Map/treasure.png")).getImage();
+    Image superMarket = new ImageIcon(getClass().getResource("./assets/Map/superMarket.png")).getImage();
+    Image waterDeco = new ImageIcon(getClass().getResource("./assets/Map/waterDeco.png")).getImage();
+    Image water = new ImageIcon(getClass().getResource("./assets/Map/water.png")).getImage();
+    Image door = new ImageIcon(getClass().getResource("./assets/Map/door.png")).getImage();
 
     Tile playerTile = new Tile((int)(boardWidth/2), (int)(boardHeight/2), tileSize, 48, idle1_Front, 0, "character");
     Character player = new Character(playerTile, 20, 20, 5);
@@ -146,16 +156,19 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     int keyCount = 0;
     String playerClass = "SwordsMan";
 
+    int indexSkin = 0;
+    Image skin1 = new ImageIcon(getClass().getResource("./assets/png/Movement/Front/idle1_Front.png")).getImage();
+
     int indexA = 0;
     Image defense = new ImageIcon(getClass().getResource("./assets/Link/Attack/def.png")).getImage();
     
     boolean attacking = false;
-    Tile attackRange = new Tile(playerTile.x-50, playerTile.y-50, playerTile.width+50, playerTile.height+50, null, 0, "player");
     Image attFront1 = new ImageIcon(getClass().getResource("./assets/Link/Attack/Front/idle1_Front.png")).getImage();
     Image attFront2 = new ImageIcon(getClass().getResource("./assets/Link/Attack/Front/idle2_Front.png")).getImage();
     
     Image inventory = new ImageIcon(getClass().getResource("./assets/Link/Objects/menu.png")).getImage();
     Image openedInventory = new ImageIcon(getClass().getResource("./assets/Link/Objects/Inventory.png")).getImage();
+    Image moneyImg = new ImageIcon(getClass().getResource("./assets/Link/Objects/money.png")).getImage();
     Image heart1Tile = new ImageIcon(getClass().getResource("./assets/Link/Objects/heart1.png")).getImage();
     Image heart2Tile = new ImageIcon(getClass().getResource("./assets/Link/Objects/heart2.png")).getImage();
     Image heart3Tile = new ImageIcon(getClass().getResource("./assets/Link/Objects/heart3.png")).getImage();
@@ -246,6 +259,9 @@ public class Game extends JPanel implements ActionListener, KeyListener {
                     String type = getType(value);
                     
                     int width = (value == 6 || value == 12 || value == 13) ? tileSize * 2 : (value == 7 ? tileSize * 4 : tileSize);
+                    if (value == 16) {
+                        width = tileSize*3;
+                    }
                     int height = width;
                     
                     tileList.add(new Tile(p * tileSize, tileList.size() / rows * tileSize + tileSize * b, width, height, img, value, type));
@@ -278,241 +294,104 @@ public class Game extends JPanel implements ActionListener, KeyListener {
             case 11 -> rock;
             case 12 -> tp;
             case 13 -> monster1;
+            case 14 -> png;
+            case 15 -> treasure;
+            case 16 -> superMarket;
+            case 17 -> waterDeco;
+            case 18 -> water;
+            case 19 -> door;
             default -> null;
         };
     }
     private String getType(int value) {
         return switch (value) {
-            case 3, 4, 6, 7, 10, 11 -> "collision";
+            case 3, 4, 6, 7, 10, 11, 16, 18 -> "collision";
             case 12 -> "tp";
             case 13 -> "monster";
+            case 14 -> "seller";
+            case 15 -> "treasure";
+            case 19 -> "door";
             default -> "bg";
         };
     }
 
- @Override
-protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    List<Tile> tilesCopy = new ArrayList<>(tiles); // Copy the list
-    List<Tile> tiles2Copy = new ArrayList<>(tiles2); // Copy the list
-    List<Tile> tiles3Copy = new ArrayList<>(tiles3); // Copy the list
-    List<Tile> tiles4Copy = new ArrayList<>(tiles4); // Copy the list
-    List<Tile> tiles5Copy = new ArrayList<>(tiles5); // Copy the list
-    List<Tile> tiles6Copy = new ArrayList<>(tiles6); // Copy the list
-    List<Tile> tiles7Copy = new ArrayList<>(tiles7); // Copy the list
-    List<Tile> tiles8Copy = new ArrayList<>(tiles8); // Copy the list
-    List<Tile> tiles9Copy = new ArrayList<>(tiles9); // Copy the list
-
-    if (center) {
-        tile(tilesCopy, true, g);
-
-        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tilesCopy, false, g);
-
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
-            }
-            g.drawImage(playerTile.img, (64*5+50)+ 75, 66 + 75, 75, 75, null);
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        
+        if (gameOver) {
+            g.drawImage(bgGameOver, 0, 0, boardWidth, boardHeight, null);
+            return;
         }
-
-    } 
-    else if (!center && nextUp && !nextRight && !nextLeft) {
-
-        
-        tile(tiles2Copy, true, g);
-
-        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tiles2Copy, false, g);
-        
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
-            }
-            g.drawImage(playerTile.img, (64*5+50)+ 75, 66, 75, 75, null);
+        if (FinalBoss) {
+            System.out.println("nkjknjbhjvhxhdfxhgvvhjb");
         }
-
-
-    } else if (nextDown && !nextRight && !nextLeft && !center) {
-
         
-        tile(tiles3Copy, true, g);
-
+        List<Tile> selectedTiles = getSelectedTiles();
+        tile(selectedTiles, true, g);
         g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tiles3Copy, false, g);
+        tile(selectedTiles, false, g);
         
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
+        drawInventory(g);
+        drawHearts(g);
+    }
+    
+    private List<Tile> getSelectedTiles() {
+        if (center) return new ArrayList<>(tiles);
+        if (nextUp && !nextRight && !nextLeft) return new ArrayList<>(tiles2);
+        if (nextDown && !nextRight && !nextLeft) return new ArrayList<>(tiles3);
+        if (nextRight && !nextUp && !nextDown) return new ArrayList<>(tiles4);
+        if (nextLeft && !nextUp && !nextDown) return new ArrayList<>(tiles5);
+        if (nextUp && nextRight) return new ArrayList<>(tiles6);
+        if (nextUp && nextLeft) return new ArrayList<>(tiles7);
+        if (nextDown && nextRight) return new ArrayList<>(tiles8);
+        if (nextDown && nextLeft) return new ArrayList<>(tiles9);
+        return new ArrayList<>();
+    }
+    
+    private void drawInventory(Graphics g) {
+        g.drawImage(inventory, 64 * 5 + 20, 16, 64 * 3, 54, null);
+        if (!openInventory) return;
+        
+        g.drawImage(openedInventory, 64 * 5 + 20, 16, boardWidth / 2, boardHeight, null);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int x = (64 * 5 + 50) + 75 * i;
+                int y = 66 + 75 * j;
+                g.setColor(Color.DARK_GRAY);
+                g.fillRect(x, y, 75, 75);
+                g.setColor(Color.BLACK);
+                g.drawRect(x, y, 75, 75);
             }
-            g.drawImage(playerTile.img, (64*5+50)+ 75, 66 + 75*2, 75, 75, null);
         }
+        g.drawImage(playerTile.img, getInventoryTileX(), getInventoryTileY(), 75, 75, null);
+        g.drawImage(moneyImg, (64 * 5 + 50)*2, 64, 75, 75, null);
+        g.drawString("" + money, (64 * 5 + 50)*2+100, 64*2);
+        if (changeSkin) {
+            g.drawString("Press W to change skin", (64 * 5 + 50)*2+100, 64*3);
 
-
-    }  else if (!center && nextRight && !nextUp && !nextDown) {
-
-        
-        tile(tiles4Copy, true, g);
-
-        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tiles4Copy, false, g);
-        
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
-            }
-            g.drawImage(playerTile.img, (64*5+50), 66 + 75, 75, 75, null);
-        }
-
-
-    }  else if (!center && nextLeft && !nextUp && !nextDown) {
-
-        
-        tile(tiles5Copy, true, g);
-
-        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tiles5Copy, false, g);
-        
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
-            }
-            g.drawImage(playerTile.img, (64*5+50)+ 75*2, 66 + 75, 75, 75, null);
-        }
-    } else if (!center && nextUp && nextRight) {
-
-        
-        tile(tiles6Copy, true, g);
-
-        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tiles6Copy, false, g);
-        
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
-            }
-            g.drawImage(playerTile.img, (64*5+50)+ 75*2, 66, 75, 75, null);
-        }
-    } else if (!center && nextUp && !nextRight && nextLeft) {
-
-        
-        tile(tiles7Copy, true, g);
-
-        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tiles7Copy, false, g);
-        
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
-            }
-            g.drawImage(playerTile.img, (64*5+50), 66, 75, 75, null);
-        }
-    } else if (!center && nextDown && nextRight && !nextLeft) {
-
-        
-        tile(tiles8Copy, true, g);
-
-        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tiles8Copy, false, g);
-        
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
-            }
-            g.drawImage(playerTile.img, (64*5+50)+ 75*2, 66 + 75*2, 75, 75, null);
-        }
-    } else if (!center && nextDown && !nextRight && nextLeft) {
-
-        
-        tile(tiles9Copy, true, g);
-
-        g.drawImage(playerTile.img, playerTile.x, playerTile.y, playerTile.width, playerTile.height, null);
-
-        tile(tiles9Copy, false, g);
-        
-        g.drawImage(inventory, 64*5+20, 16, 64*3, 54, null);
-        if (openInventory) {
-            g.drawImage(openedInventory, 64*5+20, 16, boardWidth/2, boardHeight, null);
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    g.setColor(Color.DARK_GRAY);
-                    g.fillRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                    g.setColor(Color.BLACK);
-                    g.drawRect((64*5+50)+ 75*i, 66 + 75*j, 75, 75);
-                }
-            }
-            g.drawImage(playerTile.img, (64*5+50), 66 + 75*2, 75, 75, null);
         }
     }
-    Tile[] hearts = {heart, heart2, heart3, heart4, heart5};
-    for (int i = 0; i < hearts.length; i++) {
-        g.drawImage(hearts[i].img, hearts[i].x + 64 * i, hearts[i].y, hearts[i].width, hearts[i].height, null);
+    
+    private int getInventoryTileX() {
+        if (center || nextRight) return (64 * 5 + 50) + 75;
+        if (nextLeft) return (64 * 5 + 50) + 75 * 2;
+        return (64 * 5 + 50);
     }
-}
+    
+    private int getInventoryTileY() {
+        if (nextDown) return 66 + 75 * 2;
+        if (nextUp) return 66;
+        return 66 + 75;
+    }
+    
+    private void drawHearts(Graphics g) {
+        Tile[] hearts = {heart, heart2, heart3, heart4, heart5};
+        for (int i = 0; i < hearts.length; i++) {
+            g.drawImage(hearts[i].img, hearts[i].x + 64 * i, hearts[i].y, hearts[i].width, hearts[i].height, null);
+        }
+    }
+    
 
 public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
     for (Tile tile : tileList) {
@@ -599,14 +478,14 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
                 return true;
             }
             if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextUp && !nextRight && !nextLeft && beatenTile2 == 3) {
-                if (tile.y < 4*tileSize) {
-                    System.out.println("Top");
+                if (tile.y > boardHeight-4*tileSize) {
+                    System.out.println("Bottom");
                     nextRight = false;
                     nextLeft = false;
                     nextDown = false;
                     nextUp = false;
                     center = true;
-                    zeroY = true;
+                    maxY = true;
                 }
                 if (tile.x < 2*tileSize) {
                     System.out.println("Left");
@@ -804,7 +683,7 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
                     center = false;
                     zeroY = true;
                 }
-                if (tile.x > boardWidth-2*tileSize) {
+                if (tile.x > boardWidth-10*tileSize) {
                     System.out.println("Right");
                     nextRight = false;
                     nextLeft = false;
@@ -846,11 +725,62 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && nextRight && !nextLeft) {
                 return true;
             }
+            if ("seller".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && nextRight && !nextLeft) {
+                healer = true;
+            }
+
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && nextRight && !nextLeft) {
+
+                if (tile.y > boardHeight-4*tileSize) {
+                    System.out.println("Bottom");
+                    nextRight = true;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = false;
+                    center = false;
+                    maxY = true;
+                }
+                if (tile.x < 10*tileSize) {
+                    System.out.println("Left");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = true;
+                    center = false;
+                    maxX = true;
+                }
+            }
+            
         }
         
         for (Tile tile : tiles7Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && !nextRight && nextLeft) {
                 return true;
+            }
+            if ("treasure".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && !nextRight && nextLeft) {
+                treasureOpen = true;
+                return true;
+            }
+            
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextUp && !nextRight && nextLeft) {
+                if (tile.y > boardHeight-4*tileSize) {
+                    System.out.println("Bottom");
+                    nextRight = false;
+                    nextLeft = true;
+                    nextDown = false;
+                    nextUp = false;
+                    center = false;
+                    maxY = true;
+                }
+                if (tile.x > boardWidth-10*tileSize) {
+                    System.out.println("Right");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = true;
+                    center = false;
+                    zeroX = true;
+                }
             }
         }
         
@@ -858,11 +788,61 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextDown && nextRight && !nextLeft) {
                 return true;
             }
+            if ("seller".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextDown && nextRight && !nextLeft) {
+                changeSkin = true;
+                return true;
+            }
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds())  && nextDown && nextRight && !nextLeft) {
+                if (tile.y < 10*tileSize) {
+                    System.out.println("Top");
+                    nextRight = true;
+                    nextLeft = false;
+                    nextDown = false;
+                    nextUp = false;
+                    center = false;
+                    zeroY = true;
+                }
+                if (tile.x < 10*tileSize) {
+                    System.out.println("Left");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = true;
+                    nextUp = false;
+                    center = false;
+                    maxX = true;
+                }
+            }
         }
         
         for (Tile tile : tiles9Copy) {
             if ("collision".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextDown && !nextRight && nextLeft) {
                 return true;
+            }
+            if ("door".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextDown && !nextRight && nextLeft) {
+                if (doorOpen) {
+                    FinalBoss = true;
+                }
+                return true;
+            }
+            if ("tp".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextDown && !nextRight && nextLeft) {
+                if (tile.y < 10*tileSize) {
+                    System.out.println("Top");
+                    nextRight = false;
+                    nextLeft = true;
+                    nextDown = false;
+                    nextUp = false;
+                    center = false;
+                    zeroY = true;
+                }
+                if (tile.x > boardWidth-10*tileSize) {
+                    System.out.println("Left");
+                    nextRight = false;
+                    nextLeft = false;
+                    nextDown = true;
+                    nextUp = false;
+                    center = false;
+                    zeroX = true;
+                }
             }
         }
         return false;
@@ -913,8 +893,22 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
         if (key == KeyEvent.VK_M) {
             playerTile.img = defense;
         }
+
+        if (key == KeyEvent.VK_W) {
+            if (changeSkin) {
+                playerTile.img = idle1_Front;
+            }
+        }
+
         if (key == KeyEvent.VK_X) {
             openInventory = false;
+            healer = false;
+        }
+        if (key == KeyEvent.VK_K) {
+            if (healer && money >= 12) {
+                money -= 12;
+                playerClass = "Magic";
+            }
         }
         if (key == KeyEvent.VK_N) {
             attacking = true;
@@ -1030,6 +1024,20 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
         if (checkCollision()) {
             playerTile.x -= playerVelocityX;
             playerTile.y -= playerVelocityY;
+        }
+
+        if (treasureOpen) {
+            doorOpen = true;
+        }
+
+        if (healer) {
+            player.health = 20;
+            heart.img = heart1Tile;
+            heart2.img = heart1Tile;
+            heart3.img = heart1Tile;
+            heart4.img = heart1Tile;
+            heart5.img = heart1Tile;
+            healer = false;
         }
 
         if (player.health == 20) {
