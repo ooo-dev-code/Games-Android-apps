@@ -367,25 +367,12 @@ public class Game extends JPanel implements ActionListener, KeyListener {
                 g.drawRect(x, y, 75, 75);
             }
         }
-        g.drawImage(playerTile.img, getInventoryTileX(), getInventoryTileY(), 75, 75, null);
         g.drawImage(moneyImg, (64 * 5 + 50)*2, 64, 75, 75, null);
         g.drawString("" + money, (64 * 5 + 50)*2+100, 64*2);
         if (changeSkin) {
             g.drawString("Press W to change skin", (64 * 5 + 50)*2+100, 64*3);
 
         }
-    }
-    
-    private int getInventoryTileX() {
-        if (center || nextRight) return (64 * 5 + 50) + 75;
-        if (nextLeft) return (64 * 5 + 50) + 75 * 2;
-        return (64 * 5 + 50);
-    }
-    
-    private int getInventoryTileY() {
-        if (nextDown) return 66 + 75 * 2;
-        if (nextUp) return 66;
-        return 66 + 75;
     }
     
     private void drawHearts(Graphics g) {
