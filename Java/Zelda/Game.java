@@ -46,7 +46,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     boolean changeSkin = false;
     boolean treasureOpen = false;
     boolean doorOpen = false;
-    boolean FinalBoss = false;
+    boolean win = false;
 
     int beatenTile2 = 0;
     int beatenTile3 = 0;
@@ -127,6 +127,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 
     Image bg = new ImageIcon(getClass().getResource("./assets/Map/Bg.png")).getImage();
     Image bgGameOver = new ImageIcon(getClass().getResource("./assets/GameOver.png")).getImage();
+    Image bgWin = new ImageIcon(getClass().getResource("./assets/win.jpg")).getImage();
 
     Image grass = new ImageIcon(getClass().getResource("./assets/Map/grass.png")).getImage();
     Image grass2 = new ImageIcon(getClass().getResource("./assets/Map/grass2.png")).getImage();
@@ -314,6 +315,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
             default -> "bg";
         };
     }
+    
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -323,8 +325,9 @@ public class Game extends JPanel implements ActionListener, KeyListener {
             g.drawImage(bgGameOver, 0, 0, boardWidth, boardHeight, null);
             return;
         }
-        if (FinalBoss) {
-            System.out.println("nkjknjbhjvhxhdfxhgvvhjb");
+        if (win) {
+            g.drawImage(bgWin, 0, 0, boardWidth, boardHeight, null);
+            return;
         }
         
         List<Tile> selectedTiles = getSelectedTiles();
@@ -820,7 +823,7 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
             }
             if ("door".equals(tile.type) && futureBounds.intersects(tile.getBounds()) && nextDown && !nextRight && nextLeft) {
                 if (doorOpen) {
-                    FinalBoss = true;
+                    win = true;
                 }
                 return true;
             }
@@ -860,9 +863,6 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
 
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_M) {
-            playerTile.img = defense;
-        }
         if (key == KeyEvent.VK_X) {
             openInventory = false;
         }
@@ -890,10 +890,6 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
 
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_M) {
-            playerTile.img = defense;
-        }
-
         if (key == KeyEvent.VK_W) {
             if (changeSkin) {
                 playerTile.img = idle1_Front;
@@ -913,6 +909,7 @@ public void tile(List<Tile> tileList, boolean isBackground, Graphics g) {
         if (key == KeyEvent.VK_N) {
             attacking = true;
             playerTile.img = attFront.get(indexA);
+
 
             indexA += 1;
             if (indexA > 1) {
