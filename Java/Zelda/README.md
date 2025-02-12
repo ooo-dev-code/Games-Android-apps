@@ -4,15 +4,15 @@
 
 # Features:
 - <h2>Player</h2>
-    - Animated Movement
-    - Attacks
-    - 2 skins
-    - Health
-    - Money
+    - Animated Movement</br>
+    - Attacks</br>
+    - 2 skins</br>
+    - Health</br>
+    - Money</br>
 
 - <h2>Game</h2>
-    - Game engine
-    - Tile map
-    - Collisions
-    - Monsters
-    - Decorations
+    - Game engine</br>
+    - Tile map</br>
+    - Collisions</br>
+    - Monsters</br>
+    - Decorations</br>
